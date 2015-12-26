@@ -1,4 +1,4 @@
-# docker run --rm -v $HOME/webrtc:/home/build/webrtc -v $HOME/.ccache:/home/build/.ccache webrtc
+# docker run --rm -v $HOME/webrtc:/home/build/webrtc -v $HOME/.ccache:/home/build/.ccache liyin/webrtc-android
 FROM ubuntu
 MAINTAINER Li Yin <liyin@live.com>
 

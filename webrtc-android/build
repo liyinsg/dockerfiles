@@ -1,6 +1,6 @@
 #!/bin/bash
 BASE=$HOME/webrtc
-cd $HOME && [ ! -d $BASE ] && fetch webrtc_android
+[ ! -d $BASE ] && mkdir -p $BASE && cd $BASE && fetch webrtc_android
 cd $BASE && gclient sync && gclient runhook
 if [ ! -d $BASE/src/third_party/android_tools/sdk/extras/google/google_play_services ]; then
 	echo "y" | $BASE/src/build/install-build-deps-android.sh
