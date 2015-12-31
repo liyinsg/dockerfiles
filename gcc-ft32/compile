@@ -1,0 +1,56 @@
+#! /bin/bash
+set -e
+
+OUTPUT=/usr/local/opt/ft32
+export PATH=$OUTPUT/bin:$PATH
+export OPTIONS="--prefix=${OUTPUT} --target=ft32-elf --disable-multilib --disable-threads --disable-shared"
+
+[ ! -d "$OUTPUT" ] && mkdir -p $OUTPUT
+
+cd $HOME && mkdir build && cd build
+git clone --depth=1 git://sourceware.org/git/binutils-gdb.git
+git clone --depth=1 git://gcc.gnu.org/git/gcc.git
+git clone --depth=1 -b newlib-2_2_0 git://sourceware.org/git/newlib-cygwin.git
+git clone --depth=1 -b cloog-0.18.4 git://repo.or.cz/cloog.git
+git clone --depth=1 -b isl-0.15 git://repo.or.cz/isl.git
+curl -fsSL ftp://ftp.gnu.org/gnu/mpc/mpc-1.0.3.tar.gz | tar xz
+curl -fsSL http://www.mpfr.org/mpfr-current/mpfr-3.1.3.tar.xz | tar xJ
+curl -fsSL https://gmplib.org/download/gmp/gmp-6.1.0.tar.lz | lzip -dc | tar x
+
+cd $HOME/build/gcc
+ln -sf `ls -1d ../mpfr-*/` mpfr
+ln -sf `ls -1d ../gmp-*/` gmp
+ln -sf `ls -1d ../mpc-*/` mpc
+ln -sf `ls -1d ../isl-*/` isl
+ln -sf `ls -1d ../cloog-*/` cloog
+
+cd $HOME/build && mkdir build-binutils && cd build-binutils
+CFLAGS="-Wfatal-errors -w -Wno-unused-function -Wno-format-nonliteral \
+		-Wno-unknown-warning-option -Wno-unused-value \
+		-Wno-deprecated-declarations -Wno-tautological-compare \
+		-Wno-parentheses-equality" \
+	../binutils-gdb/configure $OPTIONS && make -j9 && make install
+
+cd $HOME/build && mkdir build-gcc && cd build-gcc
+../gcc/configure --enable-languages=c,c++ --with-newlib $OPTIONS && \
+	make -j9 all-gcc && make install-gcc
+
+# newlib
+cd $HOME/build/newlib-cygwin/
+git config user.email "liyin@live.com"
+git config user.name "Li Yin"
+git am $HOME/0001-ft32-port.patch
+
+#cd /usr/local/opt/ft32/bin
+#ln -s ft32-elf-gcc ft32-elf-cc
+
+cd $HOME/build && mkdir build-newlib && cd build-newlib
+../newlib-cygwin/configure $OPTIONS && make -j9 && make install
+
+# gcc
+cd $HOME/build/build-gcc
+make -j9 all && make install
+
+rm -fr $HOME/build
+rm $HOME/0001-ft32-port.patch
+rm $HOME/compile
