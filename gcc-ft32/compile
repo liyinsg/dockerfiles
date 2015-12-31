@@ -41,9 +41,6 @@ git config user.email "liyin@live.com"
 git config user.name "Li Yin"
 git am $HOME/0001-ft32-port.patch
 
-#cd /usr/local/opt/ft32/bin
-#ln -s ft32-elf-gcc ft32-elf-cc
-
 cd $HOME/build && mkdir build-newlib && cd build-newlib
 ../newlib-cygwin/configure $OPTIONS && make -j9 && make install
 
