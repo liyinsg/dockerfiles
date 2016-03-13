@@ -14,7 +14,7 @@ git clone --depth=1 -b newlib-2_2_0 git://sourceware.org/git/newlib-cygwin.git
 git clone --depth=1 -b cloog-0.18.4 git://repo.or.cz/cloog.git
 git clone --depth=1 -b isl-0.15 git://repo.or.cz/isl.git
 curl -fsSL ftp://ftp.gnu.org/gnu/mpc/mpc-1.0.3.tar.gz | tar xz
-curl -fsSL http://www.mpfr.org/mpfr-current/mpfr-3.1.3.tar.xz | tar xJ
+curl -fsSL http://www.mpfr.org/mpfr-current/mpfr-3.1.4.tar.xz | tar xJ
 curl -fsSL https://gmplib.org/download/gmp/gmp-6.1.0.tar.lz | lzip -dc | tar x
 
 cd $HOME/build/gcc
