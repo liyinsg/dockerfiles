@@ -1,10 +1,10 @@
 # docker run --rm -v $HOME/webrtc:/home/build/webrtc -v $HOME/.ccache:/home/build/.ccache liyin/webrtc-android
-FROM ubuntu
+FROM ubuntu:16.04
 MAINTAINER Li Yin <liyin@live.com>
 
 RUN apt-get update && apt-get install -y g++ python libnss3-dev libasound2-dev \
 	libpulse-dev libjpeg62-dev libxv-dev libgtk2.0-dev libexpat1-dev git \
-	openjdk-7-jre openjdk-7-jdk ant ccache \
+	openjdk-8-jre openjdk-8-jdk ant ccache \
 	&& apt-get clean && rm -fr /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN apt-get update && apt-get install -y lib32stdc++6 lib32z1 \
 	&& apt-get clean && rm -fr /var/lib/apt/lists/* /tmp/* /var/tmp/*
