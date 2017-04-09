@@ -10,12 +10,12 @@ export OPTIONS="--prefix=${OUTPUT} --target=ft32-elf --disable-multilib --disabl
 cd $HOME && mkdir build && cd build
 git clone --depth=1 git://sourceware.org/git/binutils-gdb.git
 git clone --depth=1 git://gcc.gnu.org/git/gcc.git
-git clone --depth=1 -b newlib-2_2_0 git://sourceware.org/git/newlib-cygwin.git
+git clone --depth=1 -b newlib-snapshot-20170323 git://sourceware.org/git/newlib-cygwin.git
 git clone --depth=1 -b cloog-0.18.4 git://repo.or.cz/cloog.git
-git clone --depth=1 -b isl-0.15 git://repo.or.cz/isl.git
+git clone --depth=1 -b isl-0.18 git://repo.or.cz/isl.git
 curl -fsSL ftp://ftp.gnu.org/gnu/mpc/mpc-1.0.3.tar.gz | tar xz
-curl -fsSL http://www.mpfr.org/mpfr-current/mpfr-3.1.4.tar.xz | tar xJ
-curl -fsSL https://gmplib.org/download/gmp/gmp-6.1.0.tar.lz | lzip -dc | tar x
+curl -fsSL http://www.mpfr.org/mpfr-current/mpfr-3.1.5.tar.xz | tar xJ
+curl -fsSL https://gmplib.org/download/gmp/gmp-6.1.2.tar.lz | lzip -dc | tar x
 
 cd $HOME/build/gcc
 ln -sf `ls -1d ../mpfr-*/` mpfr
@@ -35,12 +35,6 @@ cd $HOME/build && mkdir build-gcc && cd build-gcc
 ../gcc/configure --enable-languages=c,c++ --with-newlib $OPTIONS && \
 	make -j9 all-gcc && make install-gcc
 
-# newlib
-cd $HOME/build/newlib-cygwin/
-git config user.email "liyin@live.com"
-git config user.name "Li Yin"
-git am $HOME/0001-ft32-port.patch
-
 cd $HOME/build && mkdir build-newlib && cd build-newlib
 ../newlib-cygwin/configure $OPTIONS && make -j9 && make install
 
@@ -49,5 +43,4 @@ cd $HOME/build/build-gcc
 make -j9 all && make install
 
 rm -fr $HOME/build
-rm $HOME/0001-ft32-port.patch
 rm $HOME/compile
