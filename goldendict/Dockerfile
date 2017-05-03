@@ -8,9 +8,8 @@ RUN apt-get update && apt-get install -y git pkg-config build-essential qt4-qmak
      libqt4-dev libqtwebkit-dev libxtst-dev liblzo2-dev libbz2-dev \
      libao-dev libavutil-dev libavformat-dev libtiff5-dev libeb16-dev \
      libopencc-dev && \
-     apt-get clean && rm -fr /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-RUN adduser --disabled-password --gecos "" build
+     apt-get clean && rm -fr /var/lib/apt/lists/* /tmp/* /var/tmp/*; \
+     adduser --disabled-password --gecos "" build
 
 USER build
 WORKDIR /home/build/src
