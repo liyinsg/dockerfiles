@@ -1,0 +1,37 @@
+From b4557b989104590336dbedbf2cb7f459236ebd92 Mon Sep 17 00:00:00 2001
+From: Li Yin <liyin@live.com>
+Date: Wed, 3 May 2017 14:38:44 +0800
+Subject: [PATCH] Revert back 7382ba8 to add back italic support
+
+---
+ tty.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
+
+diff --git a/tty.c b/tty.c
+index e951f25c..63aa8679 100644
+--- a/tty.c
++++ b/tty.c
+@@ -553,16 +553,10 @@ tty_putn(struct tty *tty, const void *buf, size_t len, u_int width)
+ static void
+ tty_set_italics(struct tty *tty)
+ {
+-	const char	*s;
+-
+-	if (tty_term_has(tty->term, TTYC_SITM)) {
+-		s = options_get_string(global_options, "default-terminal");
+-		if (strcmp(s, "screen") != 0 && strncmp(s, "screen-", 7) != 0) {
+-			tty_putcode(tty, TTYC_SITM);
+-			return;
+-		}
+-	}
+-	tty_putcode(tty, TTYC_SMSO);
++	if (tty_term_has(tty->term, TTYC_SITM))
++		tty_putcode(tty, TTYC_SITM);
++	else
++		tty_putcode(tty, TTYC_SMSO);
+ }
+ 
+ void
+-- 
+2.11.0
+
