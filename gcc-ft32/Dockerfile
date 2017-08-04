@@ -1,5 +1,5 @@
 #docker run -it --rm -v $PWD:/home/build liyin/gcc-ft32
-FROM ubuntu:16.04
+FROM ubuntu:17.04
 MAINTAINER Li Yin <liyin@live.com>
 
 ADD compile /root/

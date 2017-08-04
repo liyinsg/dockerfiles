@@ -3,13 +3,13 @@ set -e
 
 OUTPUT=/usr/local/opt/ft32
 export PATH=$OUTPUT/bin:$PATH
-export OPTIONS="--prefix=${OUTPUT} --target=ft32-elf --disable-multilib --disable-threads --disable-shared"
+export OPTIONS="--prefix=${OUTPUT} --target=ft32-elf --disable-threads --disable-shared --enable-lto"
 
 [ ! -d "$OUTPUT" ] && mkdir -p $OUTPUT
 
 cd $HOME && mkdir build && cd build
-git clone --depth=1 git://sourceware.org/git/binutils-gdb.git
-git clone --depth=1 git://gcc.gnu.org/git/gcc.git
+git clone --depth=1 https://github.com/bminor/binutils-gdb.git
+git clone --branch gcc-6_4_0-release --depth=1 https://github.com/gcc-mirror/gcc.git
 git clone --depth=1 -b newlib-snapshot-20170323 git://sourceware.org/git/newlib-cygwin.git
 git clone --depth=1 -b cloog-0.18.4 git://repo.or.cz/cloog.git
 git clone --depth=1 -b isl-0.18 git://repo.or.cz/isl.git
@@ -24,6 +24,7 @@ ln -sf `ls -1d ../mpc-*/` mpc
 ln -sf `ls -1d ../isl-*/` isl
 ln -sf `ls -1d ../cloog-*/` cloog
 
+# Build binutils
 cd $HOME/build && mkdir build-binutils && cd build-binutils
 CFLAGS="-Wfatal-errors -w -Wno-unused-function -Wno-format-nonliteral \
 		-Wno-unknown-warning-option -Wno-unused-value \
@@ -31,16 +32,20 @@ CFLAGS="-Wfatal-errors -w -Wno-unused-function -Wno-format-nonliteral \
 		-Wno-parentheses-equality" \
 	../binutils-gdb/configure $OPTIONS && make -j9 && make install
 
+# Build GCC (stage 1)
 cd $HOME/build && mkdir build-gcc && cd build-gcc
-../gcc/configure --enable-languages=c,c++ --with-newlib $OPTIONS && \
+../gcc/configure --enable-languages=c --with-newlib $OPTIONS && \
 	make -j9 all-gcc && make install-gcc
 
+# Build newlib
 cd $HOME/build && mkdir build-newlib && cd build-newlib
-../newlib-cygwin/configure $OPTIONS && make -j9 && make install
+../newlib-cygwin/configure --disable-newlib-supplied-syscalls $OPTIONS && \
+	make -j9 && make install
 
-# gcc
-cd $HOME/build/build-gcc
-make -j9 all && make install
+# Build GCC (stage 2)
+cd $HOME/build && rm -fr build-gcc && mkdir build-gcc && cd build-gcc
+../gcc/configure --enable-languages=c,c++ --with-newlib $OPTIONS && \
+	make -j9 all && make install
 
 rm -fr $HOME/build
 rm $HOME/compile
